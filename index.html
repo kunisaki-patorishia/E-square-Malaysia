@@ -2363,8 +2363,26 @@
       <p>看看曾经和我们合作过的学生怎么说</p>
     </div>
 
-    <!-- Reviews container -->
-    <div id="reviews" class="relative"></div>
+    <div class="reviews-carousel">
+      <div class="carousel-container relative overflow-hidden">
+        <div class="carousel-track flex transition-transform duration-700 ease-in-out" id="reviews-track">
+          <!-- Reviews will be injected here -->
+        </div>
+        <!-- Orange Nav Buttons -->
+        <button class="carousel-btn prev absolute top-1/2 left-0 -translate-y-1/2 
+                       bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] 
+                       rounded-full w-12 h-12 flex items-center justify-center 
+                       shadow-lg transition duration-300 z-10">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="carousel-btn next absolute top-1/2 right-0 -translate-y-1/2 
+                       bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] 
+                       rounded-full w-12 h-12 flex items-center justify-center 
+                       shadow-lg transition duration-300 z-10">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -2373,34 +2391,21 @@ async function loadReviews() {
   try {
     const res = await fetch("/.netlify/functions/getReviews");
     const data = await res.json();
-    const reviewsContainer = document.getElementById("reviews");
-    reviewsContainer.innerHTML = "";
+    const track = document.getElementById("reviews-track");
+    track.innerHTML = "";
 
     if (!data.reviews || data.reviews.length === 0) {
-      reviewsContainer.innerHTML = "<p class='text-center'>暂无评论</p>";
+      track.innerHTML = "<p class='text-center w-full'>暂无评论</p>";
       return;
     }
 
-    const totalSlides = data.reviews.length;
-
-    // Carousel wrapper
-    const wrapper = document.createElement("div");
-    wrapper.className = "relative overflow-hidden";
-    reviewsContainer.appendChild(wrapper);
-
-    // Track
-    const track = document.createElement("div");
-    track.className = "flex transition-transform duration-700 ease-in-out";
-    wrapper.appendChild(track);
-
-    // Create 1 review per slide
+    // Create slides (1 review per slide)
     data.reviews.forEach(review => {
       const slide = document.createElement("div");
-      slide.className = "min-w-full flex justify-center p-4";
+      slide.className = "carousel-slide min-w-full flex justify-center p-6";
 
       const card = document.createElement("div");
-      card.className =
-        "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
+      card.className = "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
       card.innerHTML = `
         <div class="flex items-center mb-4">
           <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
@@ -2416,36 +2421,25 @@ async function loadReviews() {
       track.appendChild(slide);
     });
 
-    // Navigation buttons (inside wrapper for proper positioning)
-    const prevBtn = document.createElement("button");
-    prevBtn.innerHTML = `<i class="fas fa-chevron-left"></i>`;
-    prevBtn.className =
-      "absolute top-1/2 left-0 -translate-y-1/2 bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition duration-300 z-10";
-
-    const nextBtn = document.createElement("button");
-    nextBtn.innerHTML = `<i class="fas fa-chevron-right"></i>`;
-    nextBtn.className =
-      "absolute top-1/2 right-0 -translate-y-1/2 bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition duration-300 z-10";
-
-    wrapper.appendChild(prevBtn);
-    wrapper.appendChild(nextBtn);
-
-    // Carousel logic
+    const totalSlides = data.reviews.length;
     let current = 0;
+
     function updateCarousel() {
       track.style.transform = `translateX(-${current * 100}%)`;
     }
 
-    prevBtn.addEventListener("click", () => {
+    // Controls
+    document.querySelector(".carousel-btn.prev").addEventListener("click", () => {
       current = (current - 1 + totalSlides) % totalSlides;
       updateCarousel();
     });
-    nextBtn.addEventListener("click", () => {
+
+    document.querySelector(".carousel-btn.next").addEventListener("click", () => {
       current = (current + 1) % totalSlides;
       updateCarousel();
     });
 
-    // Auto-slide
+    // Auto slide
     setInterval(() => {
       current = (current + 1) % totalSlides;
       updateCarousel();
@@ -2454,13 +2448,14 @@ async function loadReviews() {
     updateCarousel();
   } catch (err) {
     console.error("Error loading reviews:", err);
-    document.getElementById("reviews").innerHTML =
-      "<p class='text-center text-red-500'>无法加载评论</p>";
+    document.getElementById("reviews-track").innerHTML =
+      "<p class='text-center w-full text-red-500'>无法加载评论</p>";
   }
 }
 
 loadReviews();
 </script>
+
 
 
 
