@@ -2355,110 +2355,111 @@
         </div>
     </section>
 
-    <!-- Google评价 -->
-    <section class="reviews-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>学生评价</h2>
-                <p>看看曾经和我们合作过的学生怎么说</p>
-            </div>
-            
-            <script>
-                async function loadReviews() {
-                try {
-                    const res = await fetch("/.netlify/functions/getReviews");
-                    const data = await res.json();
-                    const reviewsContainer = document.getElementById("reviews");
-                    reviewsContainer.innerHTML = "";
+<!-- Google评价 -->
+<section class="reviews-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>学生评价</h2>
+      <p>看看曾经和我们合作过的学生怎么说</p>
+    </div>
 
-                    if (!data.reviews || data.reviews.length === 0) {
-                    reviewsContainer.innerHTML = "<p>暂无评论</p>";
-                    return;
-                    }
+    <!-- Where reviews will be injected -->
+    <div id="reviews" class="relative"></div>
+  </div>
+</section>
 
-                    const reviewsPerSlide = 2; // 2 reviews per slide
-                    const totalSlides = Math.ceil(data.reviews.length / reviewsPerSlide);
+<script>
+async function loadReviews() {
+  try {
+    const res = await fetch("/.netlify/functions/getReviews");
+    const data = await res.json();
+    const reviewsContainer = document.getElementById("reviews");
+    reviewsContainer.innerHTML = "";
 
-                    // Carousel wrapper
-                    const wrapper = document.createElement("div");
-                    wrapper.className = "relative overflow-hidden";
+    if (!data.reviews || data.reviews.length === 0) {
+      reviewsContainer.innerHTML = "<p class='text-center'>暂无评论</p>";
+      return;
+    }
 
-                    // Track
-                    const track = document.createElement("div");
-                    track.className = "flex transition-transform duration-700 ease-in-out";
-                    wrapper.appendChild(track);
+    const totalSlides = data.reviews.length;
 
-                    // Create slides
-                    for (let i = 0; i < totalSlides; i++) {
-                    const slide = document.createElement("div");
-                    slide.className = "min-w-full grid grid-rows-2 gap-6";
+    // Carousel wrapper
+    const wrapper = document.createElement("div");
+    wrapper.className = "relative overflow-hidden";
+    reviewsContainer.appendChild(wrapper);
 
-                    const start = i * reviewsPerSlide;
-                    const end = start + reviewsPerSlide;
-                    const slideReviews = data.reviews.slice(start, end);
+    // Track
+    const track = document.createElement("div");
+    track.className = "flex transition-transform duration-700 ease-in-out";
+    wrapper.appendChild(track);
 
-                    slideReviews.forEach(review => {
-                        const card = document.createElement("div");
-                        card.className = "p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
-                        card.innerHTML = `
-                        <div class="flex items-center mb-4">
-                            <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-12 h-12 rounded-full mr-4">
-                            <div>
-                            <p class="font-semibold">${review.author_name}</p>
-                            <p class="text-yellow-500">⭐ ${review.rating}</p>
-                            </div>
-                        </div>
-                        <p class="italic">"${review.text}"</p>
-                        <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
-                        `;
-                        slide.appendChild(card);
-                    });
+    // Create 1 review per slide
+    data.reviews.forEach(review => {
+      const slide = document.createElement("div");
+      slide.className = "min-w-full flex justify-center";
 
-                    track.appendChild(slide);
-                    }
-
-                    reviewsContainer.appendChild(wrapper);
-
-                    // Navigation buttons
-                    const prevBtn = document.createElement("button");
-                    prevBtn.innerHTML = "&lt;";
-                    prevBtn.className = "absolute top-1/2 left-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
-                    const nextBtn = document.createElement("button");
-                    nextBtn.innerHTML = "&gt;";
-                    nextBtn.className = "absolute top-1/2 right-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
-
-                    reviewsContainer.appendChild(prevBtn);
-                    reviewsContainer.appendChild(nextBtn);
-
-                    prevBtn.addEventListener("click", () => {
-                    current = (current - 1 + totalSlides) % totalSlides;
-                    updateCarousel();
-                    });
-                    nextBtn.addEventListener("click", () => {
-                    current = (current + 1) % totalSlides;
-                    updateCarousel();
-                    });
-
-                    // Auto-slide every 5s
-                    setInterval(() => {
-                    current = (current + 1) % totalSlides;
-                    updateCarousel();
-                    }, 5000);
-
-                    updateCarousel();
-
-                } catch (err) {
-                    console.error("Error loading reviews:", err);
-                    document.getElementById("reviews").innerHTML = "<p>无法加载评论</p>";
-                }
-                }
-
-                loadReviews();
-            </script>
-            
-            
+      const card = document.createElement("div");
+      card.className = "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
+      card.innerHTML = `
+        <div class="flex items-center mb-4">
+          <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
+          <div>
+            <p class="font-semibold">${review.author_name}</p>
+            <p class="text-yellow-500">⭐ ${review.rating}</p>
+          </div>
         </div>
-    </section>
+        <p class="italic leading-relaxed">"${review.text}"</p>
+        <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
+      `;
+      slide.appendChild(card);
+      track.appendChild(slide);
+    });
+
+    // Navigation buttons
+    const prevBtn = document.createElement("button");
+    prevBtn.innerHTML = "&lt;";
+    prevBtn.className =
+      "absolute top-1/2 left-0 -translate-y-1/2 bg-[var(--primary)] text-white rounded-full w-10 h-10 shadow-md z-10 flex items-center justify-center";
+    const nextBtn = document.createElement("button");
+    nextBtn.innerHTML = "&gt;";
+    nextBtn.className =
+      "absolute top-1/2 right-0 -translate-y-1/2 bg-[var(--primary)] text-white rounded-full w-10 h-10 shadow-md z-10 flex items-center justify-center";
+
+    reviewsContainer.appendChild(prevBtn);
+    reviewsContainer.appendChild(nextBtn);
+
+    // Carousel logic
+    let current = 0;
+    function updateCarousel() {
+      track.style.transform = `translateX(-${current * 100}%)`;
+    }
+
+    prevBtn.addEventListener("click", () => {
+      current = (current - 1 + totalSlides) % totalSlides;
+      updateCarousel();
+    });
+    nextBtn.addEventListener("click", () => {
+      current = (current + 1) % totalSlides;
+      updateCarousel();
+    });
+
+    // Auto-slide
+    setInterval(() => {
+      current = (current + 1) % totalSlides;
+      updateCarousel();
+    }, 5000);
+
+    updateCarousel();
+  } catch (err) {
+    console.error("Error loading reviews:", err);
+    document.getElementById("reviews").innerHTML =
+      "<p class='text-center text-red-500'>无法加载评论</p>";
+  }
+}
+
+loadReviews();
+</script>
+
 
     <!-- FAQ -->
     <section class="faq-section">
