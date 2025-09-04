@@ -2382,69 +2382,116 @@
     try {
         const res = await fetch("/.netlify/functions/getReviews");
         const data = await res.json();
-        const track = document.getElementById("reviews-track");
-        track.innerHTML = "";
+        const reviewsContainer = document.getElementById("reviews");
+        reviewsContainer.innerHTML = "";
 
         if (!data.reviews || data.reviews.length === 0) {
-        track.innerHTML = `<div class="carousel-slide w-full flex justify-center"><p class="text-center">暂无评论</p></div>`;
+        reviewsContainer.innerHTML = "<p class='text-center text-white'>暂无评论</p>";
         return;
         }
 
-        // Inject reviews into slides
-        data.reviews.forEach(review => {
+        const reviewsPerSlide = 1; // show 1 review per slide for clean UI
+        const totalSlides = data.reviews.length;
+
+        // Carousel wrapper
+        const wrapper = document.createElement("div");
+        wrapper.className = "relative overflow-hidden";
+        reviewsContainer.appendChild(wrapper);
+
+        // Track
+        const track = document.createElement("div");
+        track.className = "flex transition-transform duration-700 ease-in-out";
+        wrapper.appendChild(track);
+
+        // Create slides
+        for (let i = 0; i < totalSlides; i++) {
         const slide = document.createElement("div");
-        slide.className = "carousel-slide min-w-full px-6 flex justify-center";
+        slide.className = "min-w-full flex justify-center";
 
-        slide.innerHTML = `
-            <div class="university-intro max-w-xl w-full bg-white rounded-2xl shadow-md p-6">
-            <div class="university-photo mb-4">
-                <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-16 h-16 rounded-full mx-auto">
-            </div>
-            <div class="university-details text-center">
-                <h3 class="font-semibold text-lg">${review.author_name}</h3>
-                <p class="italic my-2">"${review.text}"</p>
-                <div class="university-stats flex justify-center gap-4 mt-2 text-sm text-gray-600">
-                <span><i class="fas fa-star text-yellow-500"></i> ${review.rating} 星</span>
-                <span><i class="fas fa-clock"></i> ${review.relative_time_description}</span>
-                </div>
+        const review = data.reviews[i];
+        const card = document.createElement("div");
+        card.className = "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
+        card.innerHTML = `
+            <div class="flex items-center mb-4">
+            <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
+            <div>
+                <p class="font-semibold">${review.author_name}</p>
+                <p class="text-yellow-500">⭐ ${review.rating}</p>
             </div>
             </div>
+            <p class="italic leading-relaxed">"${review.text}"</p>
+            <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
         `;
+        slide.appendChild(card);
         track.appendChild(slide);
-        });
-
-        // === Carousel Functionality ===
-        let currentSlide = 0;
-        const slides = track.querySelectorAll(".carousel-slide");
-        const totalSlides = slides.length;
-
-        function showSlide(index) {
-        if (index < 0) index = totalSlides - 1;
-        if (index >= totalSlides) index = 0;
-        currentSlide = index;
-        track.style.transform = `translateX(-${currentSlide * 100}%)`;
         }
 
-        document.querySelector(".carousel-btn.prev").addEventListener("click", () => {
-        showSlide(currentSlide - 1);
+        // Navigation buttons (orange styled)
+        const prevBtn = document.createElement("button");
+        prevBtn.innerHTML = `<i class="fas fa-chevron-left"></i>`;
+        prevBtn.className = `
+        absolute top-1/2 left-0 -translate-y-1/2
+        bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]
+        rounded-full w-12 h-12 flex items-center justify-center
+        shadow-lg transition duration-300 z-10
+        `;
+
+        const nextBtn = document.createElement("button");
+        nextBtn.innerHTML = `<i class="fas fa-chevron-right"></i>`;
+        nextBtn.className = `
+        absolute top-1/2 right-0 -translate-y-1/2
+        bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]
+        rounded-full w-12 h-12 flex items-center justify-center
+        shadow-lg transition duration-300 z-10
+        `;
+
+        reviewsContainer.appendChild(prevBtn);
+        reviewsContainer.appendChild(nextBtn);
+
+        // Dots
+        const dotsContainer = document.createElement("div");
+        dotsContainer.className = "flex justify-center mt-6 gap-2";
+        for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement("span");
+        dot.className = "w-3 h-3 rounded-full bg-white/50 cursor-pointer transition";
+        dot.addEventListener("click", () => {
+            current = i;
+            updateCarousel();
+        });
+        dotsContainer.appendChild(dot);
+        }
+        reviewsContainer.appendChild(dotsContainer);
+
+        // Carousel logic
+        let current = 0;
+        function updateCarousel() {
+        track.style.transform = `translateX(-${current * 100}%)`;
+        Array.from(dotsContainer.children).forEach((dot, idx) => {
+            dot.classList.toggle("bg-white", idx === current);
+            dot.classList.toggle("bg-white/50", idx !== current);
+        });
+        }
+
+        prevBtn.addEventListener("click", () => {
+        current = (current - 1 + totalSlides) % totalSlides;
+        updateCarousel();
+        });
+        nextBtn.addEventListener("click", () => {
+        current = (current + 1) % totalSlides;
+        updateCarousel();
         });
 
-        document.querySelector(".carousel-btn.next").addEventListener("click", () => {
-        showSlide(currentSlide + 1);
-        });
-
-        // Auto-slide every 5s
+        // Auto-slide
         setInterval(() => {
-        showSlide(currentSlide + 1);
+        current = (current + 1) % totalSlides;
+        updateCarousel();
         }, 5000);
 
-        // Start with first slide
-        showSlide(0);
+        updateCarousel();
 
     } catch (err) {
         console.error("Error loading reviews:", err);
-        document.getElementById("reviews-track").innerHTML =
-        `<div class="carousel-slide w-full flex justify-center"><p class="text-center">无法加载评论</p></div>`;
+        document.getElementById("reviews").innerHTML = "<p class='text-center text-white'>无法加载评论</p>";
     }
     }
 
