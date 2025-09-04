@@ -2357,131 +2357,127 @@
 
     <!-- Google评价 -->
     <section class="reviews-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>学生评价</h2>
-                <p>看看曾经和我们合作过的学生怎么说</p>
-            </div>
-        
-        <script>
-            async function loadReviews() {
-            try {
-                const res = await fetch("/.netlify/functions/getReviews");
-                const data = await res.json();
-                const reviewsContainer = document.getElementById("reviews");
-                reviewsContainer.innerHTML = "";
-
-                if (!data.reviews || data.reviews.length === 0) {
-                reviewsContainer.innerHTML = "<p>暂无评论</p>";
-                return;
-                }
-
-                const reviewsPerSlide = 2; // 2 reviews per slide
-                const totalSlides = Math.ceil(data.reviews.length / reviewsPerSlide);
-
-                // Carousel wrapper
-                const wrapper = document.createElement("div");
-                wrapper.className = "relative overflow-hidden";
-
-                // Track
-                const track = document.createElement("div");
-                track.className = "flex transition-transform duration-700 ease-in-out";
-                wrapper.appendChild(track);
-
-                // Create slides
-                for (let i = 0; i < totalSlides; i++) {
-                const slide = document.createElement("div");
-                slide.className = "min-w-full grid grid-rows-2 gap-6";
-
-                const start = i * reviewsPerSlide;
-                const end = start + reviewsPerSlide;
-                const slideReviews = data.reviews.slice(start, end);
-
-                slideReviews.forEach(review => {
-                    const card = document.createElement("div");
-                    card.className = "p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
-                    card.innerHTML = `
-                    <div class="flex items-center mb-4">
-                        <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-12 h-12 rounded-full mr-4">
-                        <div>
-                        <p class="font-semibold">${review.author_name}</p>
-                        <p class="text-yellow-500">⭐ ${review.rating}</p>
-                        </div>
-                    </div>
-                    <p class="italic">"${review.text}"</p>
-                    <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
-                    `;
-                    slide.appendChild(card);
-                });
-
-                track.appendChild(slide);
-                }
-
-                reviewsContainer.appendChild(wrapper);
-
-                // Navigation buttons
-                const prevBtn = document.createElement("button");
-                prevBtn.innerHTML = "&lt;";
-                prevBtn.className = "absolute top-1/2 left-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
-                const nextBtn = document.createElement("button");
-                nextBtn.innerHTML = "&gt;";
-                nextBtn.className = "absolute top-1/2 right-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
-
-                reviewsContainer.appendChild(prevBtn);
-                reviewsContainer.appendChild(nextBtn);
-
-                // Dots
-                const dotsContainer = document.createElement("div");
-                dotsContainer.className = "flex justify-center mt-4 gap-2";
-                for (let i = 0; i < totalSlides; i++) {
-                const dot = document.createElement("span");
-                dot.className = "w-3 h-3 rounded-full bg-white/50 cursor-pointer";
-                dot.addEventListener("click", () => {
-                    current = i;
-                    updateCarousel();
-                });
-                dotsContainer.appendChild(dot);
-                }
-                reviewsContainer.appendChild(dotsContainer);
-
-                let current = 0;
-                function updateCarousel() {
-                track.style.transform = `translateX(-${current * 100}%)`;
-                Array.from(dotsContainer.children).forEach((dot, idx) => {
-                    dot.classList.toggle("bg-white", idx === current);
-                    dot.classList.toggle("bg-white/50", idx !== current);
-                });
-                }
-
-                prevBtn.addEventListener("click", () => {
-                current = (current - 1 + totalSlides) % totalSlides;
-                updateCarousel();
-                });
-                nextBtn.addEventListener("click", () => {
-                current = (current + 1) % totalSlides;
-                updateCarousel();
-                });
-
-                // Auto-slide every 5s
-                setInterval(() => {
-                current = (current + 1) % totalSlides;
-                updateCarousel();
-                }, 5000);
-
-                updateCarousel();
-
-            } catch (err) {
-                console.error("Error loading reviews:", err);
-                document.getElementById("reviews").innerHTML = "<p>无法加载评论</p>";
-            }
-            }
-
-            loadReviews();
-        </script>
-            
-            
+    <div class="container">
+        <div class="section-title">
+        <h2>学生评价</h2>
+        <p>看看曾经和我们合作过的学生怎么说</p>
         </div>
+
+        <!-- Container for reviews -->
+        <div id="reviews"></div>
+    </div>
     </section>
+
+    <script>
+    async function loadReviews() {
+    try {
+        const res = await fetch("/.netlify/functions/getReviews");
+        const data = await res.json();
+        const reviewsContainer = document.getElementById("reviews");
+        reviewsContainer.innerHTML = "";
+
+        if (!data.reviews || data.reviews.length === 0) {
+        reviewsContainer.innerHTML = "<p>暂无评论</p>";
+        return;
+        }
+
+        const reviewsPerSlide = 2; 
+        const totalSlides = Math.ceil(data.reviews.length / reviewsPerSlide);
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "relative overflow-hidden";
+
+        const track = document.createElement("div");
+        track.className = "flex transition-transform duration-700 ease-in-out";
+        wrapper.appendChild(track);
+
+        for (let i = 0; i < totalSlides; i++) {
+        const slide = document.createElement("div");
+        slide.className = "min-w-full grid grid-rows-2 gap-6";
+
+        const start = i * reviewsPerSlide;
+        const end = start + reviewsPerSlide;
+        const slideReviews = data.reviews.slice(start, end);
+
+        slideReviews.forEach(review => {
+            const card = document.createElement("div");
+            card.className = "p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
+            card.innerHTML = `
+            <div class="flex items-center mb-4">
+                <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-12 h-12 rounded-full mr-4">
+                <div>
+                <p class="font-semibold">${review.author_name}</p>
+                <p class="text-yellow-500">⭐ ${review.rating}</p>
+                </div>
+            </div>
+            <p class="italic">"${review.text}"</p>
+            <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
+            `;
+            slide.appendChild(card);
+        });
+
+        track.appendChild(slide);
+        }
+
+        reviewsContainer.appendChild(wrapper);
+
+        const prevBtn = document.createElement("button");
+        prevBtn.innerHTML = "&lt;";
+        prevBtn.className = "absolute top-1/2 left-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
+
+        const nextBtn = document.createElement("button");
+        nextBtn.innerHTML = "&gt;";
+        nextBtn.className = "absolute top-1/2 right-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
+
+        reviewsContainer.appendChild(prevBtn);
+        reviewsContainer.appendChild(nextBtn);
+
+        const dotsContainer = document.createElement("div");
+        dotsContainer.className = "flex justify-center mt-4 gap-2";
+        for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement("span");
+        dot.className = "w-3 h-3 rounded-full bg-white/50 cursor-pointer";
+        dot.addEventListener("click", () => {
+            current = i;
+            updateCarousel();
+        });
+        dotsContainer.appendChild(dot);
+        }
+        reviewsContainer.appendChild(dotsContainer);
+
+        let current = 0;
+        function updateCarousel() {
+        track.style.transform = `translateX(-${current * 100}%)`;
+        Array.from(dotsContainer.children).forEach((dot, idx) => {
+            dot.classList.toggle("bg-white", idx === current);
+            dot.classList.toggle("bg-white/50", idx !== current);
+        });
+        }
+
+        prevBtn.addEventListener("click", () => {
+        current = (current - 1 + totalSlides) % totalSlides;
+        updateCarousel();
+        });
+        nextBtn.addEventListener("click", () => {
+        current = (current + 1) % totalSlides;
+        updateCarousel();
+        });
+
+        setInterval(() => {
+        current = (current + 1) % totalSlides;
+        updateCarousel();
+        }, 5000);
+
+        updateCarousel();
+    } catch (err) {
+        console.error("Error loading reviews:", err);
+        document.getElementById("reviews").innerHTML = "<p>无法加载评论</p>";
+    }
+    }
+
+    loadReviews();
+    </script>
+
 
     <!-- FAQ -->
     <section class="faq-section">
