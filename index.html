@@ -2366,7 +2366,7 @@
     <div class="reviews-carousel">
       <div class="carousel-container">
         <div class="carousel-track" id="reviews-track">
-          <!-- Reviews will be injected here -->
+          <!-- Reviews injected here -->
         </div>
       </div>
       <div class="carousel-controls">
@@ -2390,48 +2390,47 @@ async function loadReviews() {
       return;
     }
 
-    // Create slides (1 per review)
+    // Build slides
     data.reviews.forEach(review => {
       const slide = document.createElement("div");
-      slide.className = "carousel-slide"; // uses same styling as university slides
+      slide.className = "carousel-slide"; // same style as university carousel
 
       slide.innerHTML = `
-        <div class="review-card p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left">
-          <div class="flex items-center mb-4">
+        <div class="review-content">
+          <div class="review-header flex items-center mb-4">
             <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
             <div>
-              <p class="font-semibold">${review.author_name}</p>
+              <h3 class="font-semibold">${review.author_name}</h3>
               <p class="text-yellow-500">⭐ ${review.rating}</p>
             </div>
           </div>
           <p class="italic leading-relaxed">"${review.text}"</p>
-          <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
+          <p class="text-sm text-gray-500 mt-3">${review.relative_time_description}</p>
         </div>
       `;
       track.appendChild(slide);
     });
 
-    const totalSlides = data.reviews.length;
+    // Carousel logic (same as university section)
+    const slides = track.querySelectorAll(".carousel-slide");
     let current = 0;
 
     function updateCarousel() {
       track.style.transform = `translateX(-${current * 100}%)`;
     }
 
-    // Controls
     document.querySelector(".reviews-carousel .carousel-btn.prev").addEventListener("click", () => {
-      current = (current - 1 + totalSlides) % totalSlides;
+      current = (current - 1 + slides.length) % slides.length;
       updateCarousel();
     });
 
     document.querySelector(".reviews-carousel .carousel-btn.next").addEventListener("click", () => {
-      current = (current + 1) % totalSlides;
+      current = (current + 1) % slides.length;
       updateCarousel();
     });
 
-    // Auto-slide
     setInterval(() => {
-      current = (current + 1) % totalSlides;
+      current = (current + 1) % slides.length;
       updateCarousel();
     }, 5000);
 
@@ -2445,10 +2444,6 @@ async function loadReviews() {
 
 loadReviews();
 </script>
-
-
-
-
 
     <!-- FAQ -->
     <section class="faq-section">
