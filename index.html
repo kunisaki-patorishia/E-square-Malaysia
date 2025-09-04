@@ -2364,8 +2364,8 @@
         </div>
 
         <div class="reviews-carousel">
-        <div class="carousel-container">
-            <div class="carousel-track" id="reviews-track">
+        <div class="carousel-container" style="overflow:hidden; position:relative;">
+            <div class="carousel-track flex transition-transform duration-700 ease-in-out" id="reviews-track">
             <!-- Reviews will be injected here -->
             </div>
         </div>
@@ -2386,23 +2386,24 @@
         track.innerHTML = "";
 
         if (!data.reviews || data.reviews.length === 0) {
-        track.innerHTML = `<div class="carousel-slide"><p class="text-center">暂无评论</p></div>`;
+        track.innerHTML = `<div class="carousel-slide w-full flex justify-center"><p class="text-center">暂无评论</p></div>`;
         return;
         }
 
+        // Inject reviews into slides
         data.reviews.forEach(review => {
         const slide = document.createElement("div");
-        slide.className = "carousel-slide";
+        slide.className = "carousel-slide min-w-full px-6 flex justify-center";
 
         slide.innerHTML = `
-            <div class="university-intro">
-            <div class="university-photo">
-                <img src="${review.profile_photo_url}" alt="${review.author_name}">
+            <div class="university-intro max-w-xl w-full bg-white rounded-2xl shadow-md p-6">
+            <div class="university-photo mb-4">
+                <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-16 h-16 rounded-full mx-auto">
             </div>
-            <div class="university-details">
-                <h3>${review.author_name}</h3>
-                <p>"${review.text}"</p>
-                <div class="university-stats">
+            <div class="university-details text-center">
+                <h3 class="font-semibold text-lg">${review.author_name}</h3>
+                <p class="italic my-2">"${review.text}"</p>
+                <div class="university-stats flex justify-center gap-4 mt-2 text-sm text-gray-600">
                 <span><i class="fas fa-star text-yellow-500"></i> ${review.rating} 星</span>
                 <span><i class="fas fa-clock"></i> ${review.relative_time_description}</span>
                 </div>
@@ -2443,12 +2444,13 @@
     } catch (err) {
         console.error("Error loading reviews:", err);
         document.getElementById("reviews-track").innerHTML =
-        `<div class="carousel-slide"><p class="text-center">无法加载评论</p></div>`;
+        `<div class="carousel-slide w-full flex justify-center"><p class="text-center">无法加载评论</p></div>`;
     }
     }
 
     loadReviews();
     </script>
+
 
 
 
