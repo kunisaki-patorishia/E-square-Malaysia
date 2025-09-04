@@ -2363,7 +2363,7 @@
       <p>看看曾经和我们合作过的学生怎么说</p>
     </div>
 
-    <!-- Where reviews will be injected -->
+    <!-- Reviews container -->
     <div id="reviews" class="relative"></div>
   </div>
 </section>
@@ -2396,10 +2396,11 @@ async function loadReviews() {
     // Create 1 review per slide
     data.reviews.forEach(review => {
       const slide = document.createElement("div");
-      slide.className = "min-w-full flex justify-center";
+      slide.className = "min-w-full flex justify-center p-4";
 
       const card = document.createElement("div");
-      card.className = "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
+      card.className =
+        "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
       card.innerHTML = `
         <div class="flex items-center mb-4">
           <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
@@ -2415,18 +2416,19 @@ async function loadReviews() {
       track.appendChild(slide);
     });
 
-    // Navigation buttons
+    // Navigation buttons (inside wrapper for proper positioning)
     const prevBtn = document.createElement("button");
-    prevBtn.innerHTML = "&lt;";
+    prevBtn.innerHTML = `<i class="fas fa-chevron-left"></i>`;
     prevBtn.className =
-      "absolute top-1/2 left-0 -translate-y-1/2 bg-[var(--primary)] text-white rounded-full w-10 h-10 shadow-md z-10 flex items-center justify-center";
-    const nextBtn = document.createElement("button");
-    nextBtn.innerHTML = "&gt;";
-    nextBtn.className =
-      "absolute top-1/2 right-0 -translate-y-1/2 bg-[var(--primary)] text-white rounded-full w-10 h-10 shadow-md z-10 flex items-center justify-center";
+      "absolute top-1/2 left-0 -translate-y-1/2 bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition duration-300 z-10";
 
-    reviewsContainer.appendChild(prevBtn);
-    reviewsContainer.appendChild(nextBtn);
+    const nextBtn = document.createElement("button");
+    nextBtn.innerHTML = `<i class="fas fa-chevron-right"></i>`;
+    nextBtn.className =
+      "absolute top-1/2 right-0 -translate-y-1/2 bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition duration-300 z-10";
+
+    wrapper.appendChild(prevBtn);
+    wrapper.appendChild(nextBtn);
 
     // Carousel logic
     let current = 0;
@@ -2459,6 +2461,7 @@ async function loadReviews() {
 
 loadReviews();
 </script>
+
 
 
     <!-- FAQ -->
