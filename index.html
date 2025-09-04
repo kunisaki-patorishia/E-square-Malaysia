@@ -2356,15 +2356,15 @@
     </section>
 
     <!-- Google评价 -->
-    <section class="reviews-section">
-    <div class="container">
-        <div class="section-title">
-        <h2>学生评价</h2>
-        <p>看看曾经和我们合作过的学生怎么说</p>
+    <section class="reviews-section py-20 px-6 lg:px-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+    <div class="container text-center">
+        <div class="section-title mb-10">
+        <h2 class="text-4xl font-bold">学生评价</h2>
+        <p class="text-lg opacity-90">看看曾经和我们合作过的学生怎么说</p>
         </div>
 
-        <!-- Container for reviews -->
-        <div id="reviews"></div>
+        <!-- Carousel container -->
+        <div id="reviews" class="relative max-w-3xl mx-auto"></div>
     </div>
     </section>
 
@@ -2381,22 +2381,35 @@
         return;
         }
 
-        const reviewsPerSlide = 1; // 1 review per slide
         const totalSlides = data.reviews.length;
 
-        for (let i = 0; i < totalSlides; i++) {
+        // Carousel wrapper
+        const wrapper = document.createElement("div");
+        wrapper.className = "relative overflow-hidden";
+
+        // Track (holds all slides)
+        const track = document.createElement("div");
+        track.className = "flex transition-transform duration-700 ease-in-out";
+        wrapper.appendChild(track);
+
+        // Create slides (1 per review)
+        data.reviews.forEach(review => {
         const slide = document.createElement("div");
         slide.className = "min-w-full flex justify-center";
 
-        const review = data.reviews[i];
         const card = document.createElement("div");
-        card.className = "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
+        card.className =
+            "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-lg text-left flex flex-col";
+
+        // Build star rating
+        const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+
         card.innerHTML = `
             <div class="flex items-center mb-4">
-            <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
+            <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4 shadow">
             <div>
                 <p class="font-semibold">${review.author_name}</p>
-                <p class="text-yellow-500">⭐ ${review.rating}</p>
+                <p class="text-yellow-500">${stars}</p>
             </div>
             </div>
             <p class="italic leading-relaxed">"${review.text}"</p>
@@ -2405,26 +2418,30 @@
 
         slide.appendChild(card);
         track.appendChild(slide);
-        }
+        });
 
         reviewsContainer.appendChild(wrapper);
 
+        // Navigation buttons
         const prevBtn = document.createElement("button");
-        prevBtn.innerHTML = "&lt;";
-        prevBtn.className = "absolute top-1/2 left-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
-
+        prevBtn.innerHTML = "‹";
+        prevBtn.className =
+        "absolute top-1/2 left-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
         const nextBtn = document.createElement("button");
-        nextBtn.innerHTML = "&gt;";
-        nextBtn.className = "absolute top-1/2 right-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
+        nextBtn.innerHTML = "›";
+        nextBtn.className =
+        "absolute top-1/2 right-0 -translate-y-1/2 bg-white text-gray-800 rounded-full w-10 h-10 shadow-md z-10";
 
         reviewsContainer.appendChild(prevBtn);
         reviewsContainer.appendChild(nextBtn);
 
+        // Dots
         const dotsContainer = document.createElement("div");
         dotsContainer.className = "flex justify-center mt-4 gap-2";
         for (let i = 0; i < totalSlides; i++) {
         const dot = document.createElement("span");
-        dot.className = "w-3 h-3 rounded-full bg-white/50 cursor-pointer";
+        dot.className =
+            "w-3 h-3 rounded-full bg-white/50 cursor-pointer transition";
         dot.addEventListener("click", () => {
             current = i;
             updateCarousel();
@@ -2433,6 +2450,7 @@
         }
         reviewsContainer.appendChild(dotsContainer);
 
+        // Carousel logic
         let current = 0;
         function updateCarousel() {
         track.style.transform = `translateX(-${current * 100}%)`;
@@ -2451,6 +2469,7 @@
         updateCarousel();
         });
 
+        // Auto-slide every 5s
         setInterval(() => {
         current = (current + 1) % totalSlides;
         updateCarousel();
@@ -2465,6 +2484,7 @@
 
     loadReviews();
     </script>
+
 
 
     <!-- FAQ -->
