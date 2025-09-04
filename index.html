@@ -2364,23 +2364,14 @@
     </div>
 
     <div class="reviews-carousel">
-      <div class="carousel-container relative overflow-hidden">
-        <div class="carousel-track flex transition-transform duration-700 ease-in-out" id="reviews-track">
+      <div class="carousel-container">
+        <div class="carousel-track" id="reviews-track">
           <!-- Reviews will be injected here -->
         </div>
-        <!-- Orange Nav Buttons -->
-        <button class="carousel-btn prev absolute top-1/2 left-0 -translate-y-1/2 
-                       bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] 
-                       rounded-full w-12 h-12 flex items-center justify-center 
-                       shadow-lg transition duration-300 z-10">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <button class="carousel-btn next absolute top-1/2 right-0 -translate-y-1/2 
-                       bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] 
-                       rounded-full w-12 h-12 flex items-center justify-center 
-                       shadow-lg transition duration-300 z-10">
-          <i class="fas fa-chevron-right"></i>
-        </button>
+      </div>
+      <div class="carousel-controls">
+        <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
       </div>
     </div>
   </div>
@@ -2399,25 +2390,24 @@ async function loadReviews() {
       return;
     }
 
-    // Create slides (1 review per slide)
+    // Create slides (1 per review)
     data.reviews.forEach(review => {
       const slide = document.createElement("div");
-      slide.className = "carousel-slide min-w-full flex justify-center p-6";
+      slide.className = "carousel-slide"; // uses same styling as university slides
 
-      const card = document.createElement("div");
-      card.className = "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
-      card.innerHTML = `
-        <div class="flex items-center mb-4">
-          <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
-          <div>
-            <p class="font-semibold">${review.author_name}</p>
-            <p class="text-yellow-500">⭐ ${review.rating}</p>
+      slide.innerHTML = `
+        <div class="review-card p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left">
+          <div class="flex items-center mb-4">
+            <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
+            <div>
+              <p class="font-semibold">${review.author_name}</p>
+              <p class="text-yellow-500">⭐ ${review.rating}</p>
+            </div>
           </div>
+          <p class="italic leading-relaxed">"${review.text}"</p>
+          <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
         </div>
-        <p class="italic leading-relaxed">"${review.text}"</p>
-        <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
       `;
-      slide.appendChild(card);
       track.appendChild(slide);
     });
 
@@ -2429,17 +2419,17 @@ async function loadReviews() {
     }
 
     // Controls
-    document.querySelector(".carousel-btn.prev").addEventListener("click", () => {
+    document.querySelector(".reviews-carousel .carousel-btn.prev").addEventListener("click", () => {
       current = (current - 1 + totalSlides) % totalSlides;
       updateCarousel();
     });
 
-    document.querySelector(".carousel-btn.next").addEventListener("click", () => {
+    document.querySelector(".reviews-carousel .carousel-btn.next").addEventListener("click", () => {
       current = (current + 1) % totalSlides;
       updateCarousel();
     });
 
-    // Auto slide
+    // Auto-slide
     setInterval(() => {
       current = (current + 1) % totalSlides;
       updateCarousel();
@@ -2455,6 +2445,7 @@ async function loadReviews() {
 
 loadReviews();
 </script>
+
 
 
 
