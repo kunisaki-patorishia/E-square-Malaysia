@@ -2381,41 +2381,29 @@
         return;
         }
 
-        const reviewsPerSlide = 2; 
-        const totalSlides = Math.ceil(data.reviews.length / reviewsPerSlide);
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "relative overflow-hidden";
-
-        const track = document.createElement("div");
-        track.className = "flex transition-transform duration-700 ease-in-out";
-        wrapper.appendChild(track);
+        const reviewsPerSlide = 1; // 1 review per slide
+        const totalSlides = data.reviews.length;
 
         for (let i = 0; i < totalSlides; i++) {
         const slide = document.createElement("div");
-        slide.className = "min-w-full grid grid-rows-2 gap-6";
+        slide.className = "min-w-full flex justify-center";
 
-        const start = i * reviewsPerSlide;
-        const end = start + reviewsPerSlide;
-        const slideReviews = data.reviews.slice(start, end);
-
-        slideReviews.forEach(review => {
-            const card = document.createElement("div");
-            card.className = "p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
-            card.innerHTML = `
+        const review = data.reviews[i];
+        const card = document.createElement("div");
+        card.className = "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
+        card.innerHTML = `
             <div class="flex items-center mb-4">
-                <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-12 h-12 rounded-full mr-4">
-                <div>
+            <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
+            <div>
                 <p class="font-semibold">${review.author_name}</p>
                 <p class="text-yellow-500">⭐ ${review.rating}</p>
-                </div>
             </div>
-            <p class="italic">"${review.text}"</p>
+            </div>
+            <p class="italic leading-relaxed">"${review.text}"</p>
             <p class="text-sm text-gray-500 mt-2">${review.relative_time_description}</p>
-            `;
-            slide.appendChild(card);
-        });
+        `;
 
+        slide.appendChild(card);
         track.appendChild(slide);
         }
 
