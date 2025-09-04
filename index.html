@@ -2359,20 +2359,21 @@
     <section class="reviews-section">
     <div class="container">
         <div class="section-title">
-            <h2>学生评价</h2>
-            <p>看看曾经和我们合作过的学生怎么说</p>
+        <h2>学生评价</h2>
+        <p>看看曾经和我们合作过的学生怎么说</p>
         </div>
 
         <div class="reviews-carousel">
-            <div class="carousel-container" style="overflow:hidden; position:relative;">
-                <div class="carousel-track flex transition-transform duration-700 ease-in-out" id="reviews-track">
-                <!-- Reviews will be injected here -->
-                </div>
+        <div class="carousel-container" style="overflow:hidden; position:relative;">
+            <div class="carousel-track flex transition-transform duration-700 ease-in-out" id="reviews-track">
+            <!-- Reviews will be injected here -->
             </div>
-            <div class="carousel-controls">
-                <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
-                <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
-            </div>
+        </div>
+        <div class="carousel-controls">
+            <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div id="reviews-dots" class="flex justify-center mt-6 gap-2"></div>
         </div>
     </div>
     </section>
@@ -2382,33 +2383,24 @@
     try {
         const res = await fetch("/.netlify/functions/getReviews");
         const data = await res.json();
-        const reviewsContainer = document.getElementById("reviews");
-        reviewsContainer.innerHTML = "";
+        const track = document.getElementById("reviews-track");
+        const dotsContainer = document.getElementById("reviews-dots");
+
+        track.innerHTML = "";
+        dotsContainer.innerHTML = "";
 
         if (!data.reviews || data.reviews.length === 0) {
-        reviewsContainer.innerHTML = "<p class='text-center text-white'>暂无评论</p>";
+        track.innerHTML = "<p class='text-center text-gray-600 w-full'>暂无评论</p>";
         return;
         }
 
-        const reviewsPerSlide = 1; // show 1 review per slide for clean UI
         const totalSlides = data.reviews.length;
 
-        // Carousel wrapper
-        const wrapper = document.createElement("div");
-        wrapper.className = "relative overflow-hidden";
-        reviewsContainer.appendChild(wrapper);
-
-        // Track
-        const track = document.createElement("div");
-        track.className = "flex transition-transform duration-700 ease-in-out";
-        wrapper.appendChild(track);
-
         // Create slides
-        for (let i = 0; i < totalSlides; i++) {
+        data.reviews.forEach(review => {
         const slide = document.createElement("div");
         slide.className = "min-w-full flex justify-center";
 
-        const review = data.reviews[i];
         const card = document.createElement("div");
         card.className = "max-w-xl w-full p-6 bg-white text-gray-800 rounded-2xl shadow-md text-left flex flex-col";
         card.innerHTML = `
@@ -2424,59 +2416,34 @@
         `;
         slide.appendChild(card);
         track.appendChild(slide);
-        }
-
-        // Navigation buttons (orange styled)
-        const prevBtn = document.createElement("button");
-        prevBtn.innerHTML = `<i class="fas fa-chevron-left"></i>`;
-        prevBtn.className = `
-        absolute top-1/2 left-0 -translate-y-1/2
-        bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]
-        rounded-full w-12 h-12 flex items-center justify-center
-        shadow-lg transition duration-300 z-10
-        `;
-
-        const nextBtn = document.createElement("button");
-        nextBtn.innerHTML = `<i class="fas fa-chevron-right"></i>`;
-        nextBtn.className = `
-        absolute top-1/2 right-0 -translate-y-1/2
-        bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]
-        rounded-full w-12 h-12 flex items-center justify-center
-        shadow-lg transition duration-300 z-10
-        `;
-
-        reviewsContainer.appendChild(prevBtn);
-        reviewsContainer.appendChild(nextBtn);
+        });
 
         // Dots
-        const dotsContainer = document.createElement("div");
-        dotsContainer.className = "flex justify-center mt-6 gap-2";
         for (let i = 0; i < totalSlides; i++) {
         const dot = document.createElement("span");
-        dot.className = "w-3 h-3 rounded-full bg-white/50 cursor-pointer transition";
+        dot.className = "w-3 h-3 rounded-full bg-gray-300 cursor-pointer transition";
         dot.addEventListener("click", () => {
             current = i;
             updateCarousel();
         });
         dotsContainer.appendChild(dot);
         }
-        reviewsContainer.appendChild(dotsContainer);
 
-        // Carousel logic
         let current = 0;
         function updateCarousel() {
         track.style.transform = `translateX(-${current * 100}%)`;
         Array.from(dotsContainer.children).forEach((dot, idx) => {
-            dot.classList.toggle("bg-white", idx === current);
-            dot.classList.toggle("bg-white/50", idx !== current);
+            dot.classList.toggle("bg-blue-600", idx === current);
+            dot.classList.toggle("bg-gray-300", idx !== current);
         });
         }
 
-        prevBtn.addEventListener("click", () => {
+        // Buttons
+        document.querySelector(".carousel-btn.prev").addEventListener("click", () => {
         current = (current - 1 + totalSlides) % totalSlides;
         updateCarousel();
         });
-        nextBtn.addEventListener("click", () => {
+        document.querySelector(".carousel-btn.next").addEventListener("click", () => {
         current = (current + 1) % totalSlides;
         updateCarousel();
         });
@@ -2488,15 +2455,15 @@
         }, 5000);
 
         updateCarousel();
-
     } catch (err) {
         console.error("Error loading reviews:", err);
-        document.getElementById("reviews").innerHTML = "<p class='text-center text-white'>无法加载评论</p>";
+        document.getElementById("reviews-track").innerHTML = "<p class='text-center text-red-500'>无法加载评论</p>";
     }
     }
 
     loadReviews();
     </script>
+
 
 
 
