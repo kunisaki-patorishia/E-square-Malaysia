@@ -2523,144 +2523,84 @@ loadReviews();
         </div>
     </footer>
 
-    <script>
+<script>
         // 表单提交处理
         document.getElementById('consultation-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // 表单验证
-            const fullname = document.getElementById('fullname').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const education = document.getElementById('education').value;
-            const university = document.getElementById('university').value.trim();
-            const subject = document.getElementById('subject').value.trim();
-            
-            // 检查所有必填字段
-            if (!fullname) {
-                alert('请填写英文全名');
-                document.getElementById('fullname').focus();
-                return;
-            }
-            
-            if (!email) {
-                alert('请填写电子邮箱');
-                document.getElementById('email').focus();
-                return;
-            }
-            
-            if (!phone) {
-                alert('请填写手机号码');
-                document.getElementById('phone').focus();
-                return;
-            }
-            
-            if (!education) {
-                alert('请选择最高学历');
-                document.getElementById('education').focus();
-                return;
-            }
-            
-            if (!university) {
-                alert('请填写感兴趣大学');
-                document.getElementById('university').focus();
-                return;
-            }
-            
+        
+        // 表单验证
+        const fullname = document.getElementById('fullname').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const education = document.getElementById('education').value;
+        const university = document.getElementById('university').value.trim();
+        const subject = document.getElementById('subject').value.trim();
 
-            
-            // 验证邮箱格式
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('请输入有效的邮箱地址');
-                document.getElementById('email').focus();
-                return;
-            }
-            
-            // 验证手机号码格式（马来西亚格式）
-            const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
-            let isValidPhone = false;
-            
-            console.log('手机号码:', phone);
-            console.log('清理后:', cleanPhone);
-            console.log('长度:', cleanPhone.length);
-            
-            // 检查是否以01开头
-            if (!cleanPhone.startsWith('01')) {
-                alert('手机号码必须以01开头');
-                document.getElementById('phone').focus();
-                return;
-            }
-            
-            // 检查011格式（11位）
-            if (cleanPhone.startsWith('011')) {
-                if (cleanPhone.length === 11 && /^011\d{8}$/.test(cleanPhone)) {
-                    isValidPhone = true;
-                    console.log('011格式验证通过');
-                } else {
-                    console.log('011格式验证失败');
-                }
-            }
-            // 检查010, 012-019格式（10位）
-            else if (cleanPhone.startsWith('010') || /^01[2-9]/.test(cleanPhone)) {
-                if (cleanPhone.length === 10 && /^01[0,2-9]\d{7}$/.test(cleanPhone)) {
-                    isValidPhone = true;
-                    console.log('010/012-019格式验证通过');
-                } else {
-                    console.log('010/012-019格式验证失败');
-                }
-            }
-            
-            console.log('最终验证结果:', isValidPhone);
-            
-            if (!isValidPhone) {
-                alert('请输入有效的手机号码：\n011开头需要8位数字（总共11位）\n010, 012-019开头需要7位数字（总共10位）');
-                document.getElementById('phone').focus();
-                return;
-            }
-            
-            // 获取表单数据
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
-            
-            // 发送到Google Sheets
-            fetch('https://script.google.com/macros/s/AKfycbz-OAO3eRQm4TNQ2FYM_s8QILlj8267uKTugnqnziuBU1UoMcv5YqGkN5bW01eS3rMJdw/exec', {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-            alert('感谢您的咨询！我们将在24小时内与您联系。');
-            this.reset();
-                    // 重置后重新设置天津大学为默认值
-                    document.getElementById('university').value = '天津大学';
-                } else {
-                    alert('提交失败，请稍后重试。');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('提交失败，请稍后重试。');
-            });
-        });
-        
-        // 点击按钮后表格闪烁提醒
-        function triggerFormAttention() {
-            const form = document.getElementById('hero-form');
-            if (form) {
-                form.classList.add('attention');
-                
-                // 3秒后停止闪烁
-                setTimeout(() => {
-                    form.classList.remove('attention');
-                }, 3000);
-            }
+        if (!fullname || !email || !phone || !education || !university) {
+            alert('请完整填写所有必填字段');
+            return;
         }
-        
+
+        // 验证邮箱格式
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('请输入有效的邮箱地址');
+            return;
+        }
+
+        // 验证手机号码格式（马来西亚格式）
+        const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+        let isValidPhone = false;
+
+        if (cleanPhone.startsWith('011')) {
+            isValidPhone = cleanPhone.length === 11 && /^011\d{8}$/.test(cleanPhone);
+        } else if (cleanPhone.startsWith('010') || /^01[2-9]/.test(cleanPhone)) {
+            isValidPhone = cleanPhone.length === 10 && /^01[0,2-9]\d{7}$/.test(cleanPhone);
+        }
+
+        if (!isValidPhone) {
+            alert('请输入有效的手机号码：\n011开头需要8位数字（总共11位）\n010, 012-019开头需要7位数字（总共10位）');
+            return;
+        }
+
+        // 获取表单数据
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+
+        // 发送到Google Sheets
+        fetch('https://script.google.com/macros/s/AKfycbz-OAO3eRQm4TNQ2FYM_s8QILlj8267uKTugnqnziuBU1UoMcv5YqGkN5bW01eS3rMJdw/exec', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.result === 'success') {
+                // 跳转到 Thank You 页面
+                window.location.href = "/thank-you.html";
+            } else {
+                alert('提交失败，请稍后重试。');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('提交失败，请稍后重试。');
+        });
+    });
+
+    // 点击按钮后表格闪烁提醒
+    function triggerFormAttention() {
+        const form = document.getElementById('hero-form');
+        if (form) {
+            form.classList.add('attention');
+            setTimeout(() => {
+                form.classList.remove('attention');
+            }, 3000);
+        }
+    }
+      
 
         
         // 大学轮播功能
