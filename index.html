@@ -1979,61 +1979,63 @@
             </div>
                 <div class="hero-right" id="hero-form">
                 <h2>免费咨询</h2>
-                <form id="consultation-form" action="https://script.google.com/macros/s/AKfycbxxeY930JfX1-YLmq__Br7Ev31rJEvLCAxehecxLQnNe94wq_19YxMeI_WDFiDh8kBuGA/exec" method="POST">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fullname">英文全名 <span class="required">*</span></label>
-                            <input type="text" id="fullname" name="fullname" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">电子邮箱 <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="phone">手机号码 <span class="required">*</span></label>
-                            <input type="tel" id="phone" name="phone" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="education">最高学历 <span class="required">*</span></label>
-                            <select id="education" name="education" class="form-control" required>
-                                <option value="">请选择</option>
-                                <option value="UEC">UEC</option>
-                                <option value="SPM">SPM</option>
-                                <option value="IGCSE">IGCSE</option>
-                                <option value="A-LEVEL">A-LEVEL</option>
-                                <option value="STPM">STPM</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
+                <form id="consultation-form">
                     <div class="form-row">
                     <div class="form-group">
-                            <label for="university">感兴趣大学 <span class="required">*</span></label>
-                            <input type="text" id="university" name="university" class="form-control" value="天津大学" required>
+                        <label for="fullname">英文全名 <span class="required">*</span></label>
+                        <input type="text" id="fullname" name="fullname" class="form-control" required>
                     </div>
                     <div class="form-group">
-                            <label for="subject">感兴趣科目</label>
-                            <select id="subject" name="subject" class="form-control">
-                                <option value="">请选择感兴趣的科目</option>
-                                <option value="工程类">工程类</option>
-                                <option value="商科类">商科类</option>
-                                <option value="计算机科学">计算机科学</option>
-                                <option value="医学类">医学类</option>
-                                <option value="艺术设计">艺术设计</option>
-                                <option value="教育类">教育类</option>
-                                <option value="法律类">法律类</option>
-                                <option value="传媒类">传媒类</option>
-                                <option value="环境科学">环境科学</option>
-                                <option value="其他">其他</option>
-                            </select>
+                        <label for="email">电子邮箱 <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control" required>
                     </div>
                     </div>
+
+                    <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">手机号码 <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="education">最高学历 <span class="required">*</span></label>
+                        <select id="education" name="education" class="form-control" required>
+                        <option value="">请选择</option>
+                        <option value="UEC">UEC</option>
+                        <option value="SPM">SPM</option>
+                        <option value="IGCSE">IGCSE</option>
+                        <option value="A-LEVEL">A-LEVEL</option>
+                        <option value="STPM">STPM</option>
+                        <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    </div>
+
+                    <div class="form-row">
+                    <div class="form-group">
+                        <label for="university">感兴趣大学 <span class="required">*</span></label>
+                        <input type="text" id="university" name="university" class="form-control" value="天津大学" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">感兴趣科目</label>
+                        <select id="subject" name="subject" class="form-control">
+                        <option value="">请选择感兴趣的科目</option>
+                        <option value="工程类">工程类</option>
+                        <option value="商科类">商科类</option>
+                        <option value="计算机科学">计算机科学</option>
+                        <option value="医学类">医学类</option>
+                        <option value="艺术设计">艺术设计</option>
+                        <option value="教育类">教育类</option>
+                        <option value="法律类">法律类</option>
+                        <option value="传媒类">传媒类</option>
+                        <option value="环境科学">环境科学</option>
+                        <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    </div>
+
                     <button type="submit" class="btn btn-primary form-submit-btn" style="width: 100%;">提交咨询</button>
                 </form>
                 </div>
-            </div>
         </div>
     </section>
 
@@ -2569,29 +2571,30 @@ loadReviews();
 
         // 发送到Google Sheets
         document.getElementById('consultation-form').addEventListener('submit', function(e) {
-            e.preventDefault();
+        e.preventDefault();
 
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
 
-            fetch("/.netlify/functions/submitForm", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.result === "success") {
-                    window.location.href = "/thank-you.html";
-                } else {
-                    alert("提交失败，请稍后重试：" + (data.message || ""));
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("提交失败，请稍后重试。");
-            });
+        fetch("/.netlify/functions/submitForm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result => {
+            if (result.result === "success") {
+            window.location.href = "/thank-you.html";
+            } else {
+            alert("提交失败，请稍后重试：" + (result.message || ""));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("提交失败，请稍后重试。");
         });
+        });
+
 
     // 点击按钮后表格闪烁提醒
     function triggerFormAttention() {
