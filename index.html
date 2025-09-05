@@ -2568,7 +2568,7 @@ loadReviews();
         const data = Object.fromEntries(formData);
 
         // 发送到Google Sheets
-        fetch('https://script.google.com/macros/s/AKfycbxWZK5Kuw8Iqc2Trv4VwSeDvZSKFElNOJHPJpfWo_sXLTbQrmiHxgIRNHahsUX0VjHbgg/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbz-OAO3eRQm4TNQ2FYM_s8QILlj8267uKTugnqnziuBU1UoMcv5YqGkN5bW01eS3rMJdw/exec', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
