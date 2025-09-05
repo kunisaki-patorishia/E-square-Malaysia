@@ -2357,95 +2357,95 @@
         </div>
     </section>
 
-<!-- Google评价 -->
-<section class="reviews-section">
-  <div class="container">
-    <div class="section-title">
-      <h2>学生评价</h2>
-      <p>看看曾经和我们合作过的学生怎么说</p>
-    </div>
-
-    <div class="reviews-carousel">
-      <div class="carousel-container">
-        <div class="carousel-track" id="reviews-track">
-          <!-- Reviews injected here -->
+    <!-- Google评价 -->
+    <section class="reviews-section">
+    <div class="container">
+        <div class="section-title">
+        <h2>学生评价</h2>
+        <p>看看曾经和我们合作过的学生怎么说</p>
         </div>
-      </div>
-      <div class="carousel-controls">
-        <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
-        <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
-      </div>
-    </div>
-  </div>
-</section>
 
-<script>
-async function loadReviews() {
-  try {
-    const res = await fetch("/.netlify/functions/getReviews");
-    const data = await res.json();
-    const track = document.getElementById("reviews-track");
-    track.innerHTML = "";
-
-    if (!data.reviews || data.reviews.length === 0) {
-      track.innerHTML = "<p class='text-center w-full'>暂无评论</p>";
-      return;
-    }
-
-    // Build slides
-    data.reviews.forEach(review => {
-      const slide = document.createElement("div");
-      slide.className = "carousel-slide"; // same style as university carousel
-
-      slide.innerHTML = `
-        <div class="review-content">
-          <div class="review-header flex items-center mb-4">
-            <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
-            <div>
-              <h3 class="font-semibold">${review.author_name}</h3>
-              <p class="text-yellow-500">⭐ ${review.rating}</p>
+        <div class="reviews-carousel">
+        <div class="carousel-container">
+            <div class="carousel-track" id="reviews-track">
+            <!-- Reviews injected here -->
             </div>
-          </div>
-          <p class="italic leading-relaxed">"${review.text}"</p>
-          <p class="text-sm text-gray-500 mt-3">${review.relative_time_description}</p>
         </div>
-      `;
-      track.appendChild(slide);
-    });
+        <div class="carousel-controls">
+            <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        </div>
+    </div>
+    </section>
 
-    // Carousel logic (same as university section)
-    const slides = track.querySelectorAll(".carousel-slide");
-    let current = 0;
+    <script>
+    async function loadReviews() {
+    try {
+        const res = await fetch("/.netlify/functions/getReviews");
+        const data = await res.json();
+        const track = document.getElementById("reviews-track");
+        track.innerHTML = "";
 
-    function updateCarousel() {
-      track.style.transform = `translateX(-${current * 100}%)`;
+        if (!data.reviews || data.reviews.length === 0) {
+        track.innerHTML = "<p class='text-center w-full'>暂无评论</p>";
+        return;
+        }
+
+        // Build slides
+        data.reviews.forEach(review => {
+        const slide = document.createElement("div");
+        slide.className = "carousel-slide"; // same style as university carousel
+
+        slide.innerHTML = `
+            <div class="review-content">
+            <div class="review-header flex items-center mb-4">
+                <img src="${review.profile_photo_url}" alt="${review.author_name}" class="w-14 h-14 rounded-full mr-4">
+                <div>
+                <h3 class="font-semibold">${review.author_name}</h3>
+                <p class="text-yellow-500">⭐ ${review.rating}</p>
+                </div>
+            </div>
+            <p class="italic leading-relaxed">"${review.text}"</p>
+            <p class="text-sm text-gray-500 mt-3">${review.relative_time_description}</p>
+            </div>
+        `;
+        track.appendChild(slide);
+        });
+
+        // Carousel logic (same as university section)
+        const slides = track.querySelectorAll(".carousel-slide");
+        let current = 0;
+
+        function updateCarousel() {
+        track.style.transform = `translateX(-${current * 100}%)`;
+        }
+
+        document.querySelector(".reviews-carousel .carousel-btn.prev").addEventListener("click", () => {
+        current = (current - 1 + slides.length) % slides.length;
+        updateCarousel();
+        });
+
+        document.querySelector(".reviews-carousel .carousel-btn.next").addEventListener("click", () => {
+        current = (current + 1) % slides.length;
+        updateCarousel();
+        });
+
+        setInterval(() => {
+        current = (current + 1) % slides.length;
+        updateCarousel();
+        }, 5000);
+
+        updateCarousel();
+    } catch (err) {
+        console.error("Error loading reviews:", err);
+        document.getElementById("reviews-track").innerHTML =
+        "<p class='text-center w-full text-red-500'>无法加载评论</p>";
+    }
     }
 
-    document.querySelector(".reviews-carousel .carousel-btn.prev").addEventListener("click", () => {
-      current = (current - 1 + slides.length) % slides.length;
-      updateCarousel();
-    });
-
-    document.querySelector(".reviews-carousel .carousel-btn.next").addEventListener("click", () => {
-      current = (current + 1) % slides.length;
-      updateCarousel();
-    });
-
-    setInterval(() => {
-      current = (current + 1) % slides.length;
-      updateCarousel();
-    }, 5000);
-
-    updateCarousel();
-  } catch (err) {
-    console.error("Error loading reviews:", err);
-    document.getElementById("reviews-track").innerHTML =
-      "<p class='text-center w-full text-red-500'>无法加载评论</p>";
-  }
-}
-
-loadReviews();
-</script>
+    loadReviews();
+    </script>
 
     <!-- FAQ -->
     <section class="faq-section">
@@ -2525,7 +2525,7 @@ loadReviews();
         </div>
     </footer>
 
-<script>
+    <script>
         // 表单提交处理
         document.getElementById('consultation-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -2596,19 +2596,18 @@ loadReviews();
         });
 
 
-    // 点击按钮后表格闪烁提醒
-    function triggerFormAttention() {
-        const form = document.getElementById('hero-form');
-        if (form) {
-            form.classList.add('attention');
-            setTimeout(() => {
-                form.classList.remove('attention');
-            }, 3000);
+        // 点击按钮后表格闪烁提醒
+        function triggerFormAttention() {
+            const form = document.getElementById('hero-form');
+            if (form) {
+                form.classList.add('attention');
+                setTimeout(() => {
+                    form.classList.remove('attention');
+                }, 3000);
+            }
         }
-    }
-      
-
-        
+        }); 
+           
         // 大学轮播功能
         let currentSlide = 0;
         const slides = document.querySelectorAll('.carousel-slide');
