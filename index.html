@@ -2568,14 +2568,12 @@ loadReviews();
         const data = Object.fromEntries(formData);
 
         // 发送到Google Sheets
-        fetch('https://script.google.com/macros/s/AKfycbxxeY930JfX1-YLmq__Br7Ev31rJEvLCAxehecxLQnNe94wq_19YxMeI_WDFiDh8kBuGA/exec', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-            
+        fetch("/.netlify/functions/submitForm", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
         })
+
         .then(response => response.json())
         .then(data => {
             if (data.result === 'success') {
