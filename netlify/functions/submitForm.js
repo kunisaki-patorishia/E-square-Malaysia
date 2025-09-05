@@ -28,7 +28,7 @@ export async function handler(event, context) {
 
     // Forward request to Google Apps Script Web App
     const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbwgTzjWwayb9kNjuEq-bOVktOMJXhSl7E0aZvB1elIVTp3djUqXLtgNYnJb1gnFi8OpOg/exec",
+      "https://script.google.com/macros/s/AKfycbzasQafEHhnmbje6VmKwX1vulLOy-jDwillLQNaITn-UrlQtnisjlbcPo04Ej8uiQ_YJg/exec",
       {
         method: "POST",
         body: JSON.stringify(data),
