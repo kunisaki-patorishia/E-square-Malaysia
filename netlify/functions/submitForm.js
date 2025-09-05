@@ -10,7 +10,7 @@ export async function handler(event, context) {
     const data = JSON.parse(event.body);
 
     const response = await fetch(
-      "YOUR_GOOGLE_https://script.google.com/macros/s/AKfycbxxeY930JfX1-YLmq__Br7Ev31rJEvLCAxehecxLQnNe94wq_19YxMeI_WDFiDh8kBuGA/execAPPS_SCRIPT_WEB_APP_URL", // replace with your Apps Script URL
+      "https://script.google.com/macros/s/AKfycbxxeY930JfX1-YLmq__Br7Ev31rJEvLCAxehecxLQnNe94wq_19YxMeI_WDFiDh8kBuGA/exec", // replace with your Apps Script URL
       {
         method: "POST",
         body: JSON.stringify(data),
